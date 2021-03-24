@@ -1,0 +1,30 @@
+/* General Purpose Register Top Module */
+module gpr(Rx,Ry,Rz,DATA_IN,REG_WR,Rx_value,Ry_value,Rz_value);
+  input [3:0] Rx,Ry,Rz;
+  input REG_WR;
+  // input CLK;
+  input [15:0] DATA_IN;
+  output [15:0] Rx_value,Ry_value,Rz_value;
+  wire [15:0] wz;
+  wire [15:0] reg_out0,reg_out1,reg_out2,reg_out3,reg_out4,reg_out5,reg_out6,reg_out7,reg_out8,reg_out9,reg_out10,reg_out11,reg_out12,reg_out13,reg_out14,reg_out15;
+  reg_decoder DECODER_Rz(.IN(Rz),.OUT_D(wz));
+  pipo R0(.CLK_REG(wz[0] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out0));
+  pipo R1(.CLK_REG(wz[1] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out1));
+  pipo R2(.CLK_REG(wz[2] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out2));
+  pipo R3(.CLK_REG(wz[3] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out3));
+  pipo R4(.CLK_REG(wz[4] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out4));
+  pipo R5(.CLK_REG(wz[5] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out5));
+  pipo R6(.CLK_REG(wz[6] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out6));
+  pipo R7(.CLK_REG(wz[7] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out7));
+  pipo R8(.CLK_REG(wz[8] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out8));
+  pipo R9(.CLK_REG(wz[9] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out9));
+  pipo R10(.CLK_REG(wz[10] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out10));
+  pipo R11(.CLK_REG(wz[11] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out11));
+  pipo R12(.CLK_REG(wz[12] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out12));
+  pipo R13(.CLK_REG(wz[13] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out13));
+  pipo R14(.CLK_REG(wz[14] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out14));
+  pipo R15(.CLK_REG(wz[15] & REG_WR ),.DATA_IN_REG(DATA_IN),.DATA_OUT_REG(reg_out15));
+  reg_mux mux_Rx(.IN0(reg_out0),.IN1(reg_out1),.IN2(reg_out2),.IN3(reg_out3),.IN4(reg_out4),.IN5(reg_out5),.IN6(reg_out6),.IN7(reg_out7),.IN8(reg_out8),.IN9(reg_out9),.IN10(reg_out10),.IN11(reg_out11),.IN12(reg_out12),.IN13(reg_out13),.IN14(reg_out14),.IN15(reg_out15),.SEL(Rx),.OUT_M(Rx_value));
+  reg_mux mux_Ry(.IN0(reg_out0),.IN1(reg_out1),.IN2(reg_out2),.IN3(reg_out3),.IN4(reg_out4),.IN5(reg_out5),.IN6(reg_out6),.IN7(reg_out7),.IN8(reg_out8),.IN9(reg_out9),.IN10(reg_out10),.IN11(reg_out11),.IN12(reg_out12),.IN13(reg_out13),.IN14(reg_out14),.IN15(reg_out15),.SEL(Ry),.OUT_M(Ry_value));
+  reg_mux mux_Rz(.IN0(reg_out0),.IN1(reg_out1),.IN2(reg_out2),.IN3(reg_out3),.IN4(reg_out4),.IN5(reg_out5),.IN6(reg_out6),.IN7(reg_out7),.IN8(reg_out8),.IN9(reg_out9),.IN10(reg_out10),.IN11(reg_out11),.IN12(reg_out12),.IN13(reg_out13),.IN14(reg_out14),.IN15(reg_out15),.SEL(Rz),.OUT_M(Rz_value));
+endmodule // gpr
