@@ -1,0 +1,21 @@
+module risc(CLK,RESET,STATUS_FLAG,ALU_RES);
+  input CLK,RESET;
+  output [2:0] STATUS_FLAG;
+  output [15:0] ALU_RES;
+  wire [5:0] pc_jmp_addr,pc_addr;
+  wire [23:0] instr_word;
+  wire [15:0] data_gpr,rx_value_alu,ry_value_alu,rz_value_alu,addr_data_mem,data_mem_out,imm_data;
+  wire [3:0] rx_gpr,ry_gpr,rz_gpr,opcode_alu;
+  wire [1:0] ctrl_sel;
+  wire [16:0] alu_op;
+  wire ctrl_jmp,ctrl_pc_en,ctrl_reg_wr,ctrl_mem_wr;
+  assign ALU_RES = alu_op[15:0];
+  instruction_memory INSTR_MEM(.INSTR_ADDR(pc_addr),.INSTR_WORD(instr_word));
+  sel_mux DATA_SEL_MUX(.in1(imm_data),.in2(data_mem_out),.in3(ALU_RES),.sel(ctrl_sel),.out(data_gpr));
+  data_mem DATA_MEM(.ADDR(addr_data_mem),.CLK(CLK),.MEM_WR(ctrl_mem_wr),.DATA_IN(rz_value_alu),.DATA_OUT(data_mem_out));
+  gpr GPR(.Rx(rx_gpr),.Ry(ry_gpr),.Rz(rz_gpr),.DATA_IN(data_gpr),.REG_WR(ctrl_reg_wr & CLK),.Rx_value(rx_value_alu),.Ry_value(ry_value_alu),.Rz_value(rz_value_alu));
+  instruction_register INSTR_REG(.instrn(instr_word),.clk(CLK),.opcode(opcode_alu),.rx(rx_gpr),.ry(ry_gpr),.rz(rz_gpr),.immediate(imm_data),.address(addr_data_mem),.jmp_addrs(pc_jmp_addr));
+  program_counter PRG_COUNTER(.jmp_addrs(pc_jmp_addr),.clk(CLK),.rst(RESET),.pc_en_in(ctrl_pc_en),.jmp_in(ctrl_jmp),.addrs(pc_addr));
+  control_unit CU(.clk(CLK),.rst(RESET),.opcode_in(instr_word[23:20]),.pc_en(ctrl_pc_en),.jmp(ctrl_jmp),.mem_wr(ctrl_mem_wr),.sel(ctrl_sel),.reg_wr(ctrl_reg_wr));
+  ALU_16_bit ALU(.a(rx_value_alu),.b(ry_value_alu),.alu_control(opcode_alu),.result(alu_op),.zero_flag(STATUS_FLAG[1]),.carry_flag(STATUS_FLAG[2]),.parity_flag(STATUS_FLAG[0]));
+endmodule // risc
